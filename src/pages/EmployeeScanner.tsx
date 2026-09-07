@@ -18,31 +18,72 @@ const EmployeeScanner = () => {
   // Ref to ensure we only initialize the scanner once
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
+  // const requestCameraAndStart = async () => {
+  //   try {
+  //     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+  //       throw new Error("Your browser does not support camera access.");
+  //     }
+
+  //     let stream;
+  //     try {
+  //       // Explicitly request back camera first
+  //       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+  //     } catch (err) {
+  //       // Fallback to any camera if back camera specifically is not found (fixes OverconstrainedError)
+  //       stream = await navigator.mediaDevices.getUserMedia({ video: true });
+  //     }
+
+  //     // Stop the test stream, we just wanted the permission
+  //     stream.getTracks().forEach(track => track.stop());
+
+  //     setPermissionDenied(false);
+  //     setHasPermission(true);
+  //     setScanning(true);
+  //     setResultMessage(null);
+  //   } catch (error: any) {
+  //     console.error("Camera permission denied:", error);
+  //     setPermissionErrorMsg(error.message || error.name || "Unknown error");
+  //     setPermissionDenied(true);
+  //     setHasPermission(false);
+  //   }
+  // };
   const requestCameraAndStart = async () => {
     try {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error("Your browser does not support camera access.");
+      console.log("Secure context:", window.isSecureContext);
+      console.log("MediaDevices:", !!navigator.mediaDevices);
+      console.log("URL:", window.location.href);
+
+      if (!window.isSecureContext) {
+        throw new Error("Camera requires HTTPS. This page is not a secure context.");
       }
 
-      let stream;
-      try {
-        // Explicitly request back camera first
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-      } catch (err) {
-        // Fallback to any camera if back camera specifically is not found (fixes OverconstrainedError)
-        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (!navigator.mediaDevices?.getUserMedia) {
+        throw new Error("getUserMedia is not available in this browser.");
       }
 
-      // Stop the test stream, we just wanted the permission
-      stream.getTracks().forEach(track => track.stop());
-      
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: false,
+      });
+
+      console.log("Camera permission granted");
+
+      stream.getTracks().forEach((track) => track.stop());
+
       setPermissionDenied(false);
       setHasPermission(true);
       setScanning(true);
       setResultMessage(null);
+
     } catch (error: any) {
-      console.error("Camera permission denied:", error);
-      setPermissionErrorMsg(error.message || error.name || "Unknown error");
+      console.error("Camera error:", error);
+      console.error("Name:", error?.name);
+      console.error("Message:", error?.message);
+
+      setPermissionErrorMsg(
+        `${error?.name || "UnknownError"}: ${error?.message || "Unknown error"}`
+      );
+
       setPermissionDenied(true);
       setHasPermission(false);
     }

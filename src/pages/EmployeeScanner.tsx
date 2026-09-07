@@ -5,7 +5,9 @@ import { useToast } from '../components/Toast';
 
 const EmployeeScanner = () => {
   const { showToast } = useToast();
-  const [scanning, setScanning] = useState(true);
+  const [scanning, setScanning] = useState(false);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [permissionDenied, setPermissionDenied] = useState(false);
   const [status, setStatus] = useState<'active' | 'inactive' | null>(null);
   const [companyName, setCompanyName] = useState<string>('');
   const [loading, setLoading] = useState(true);
@@ -14,6 +16,24 @@ const EmployeeScanner = () => {
 
   // Ref to ensure we only initialize the scanner once
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
+
+  const requestCameraAndStart = async () => {
+    try {
+      // Explicitly request camera permission first
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      // Stop the test stream, we just wanted the permission
+      stream.getTracks().forEach(track => track.stop());
+      
+      setPermissionDenied(false);
+      setHasPermission(true);
+      setScanning(true);
+      setResultMessage(null);
+    } catch (error) {
+      console.error("Camera permission denied:", error);
+      setPermissionDenied(true);
+      setHasPermission(false);
+    }
+  };
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -91,7 +111,8 @@ const EmployeeScanner = () => {
 
   const handleReset = () => {
     setResultMessage(null);
-    setScanning(true);
+    setScanning(false); // Reset to button instead of auto-scanning
+    setHasPermission(null);
   };
 
   return (
@@ -150,13 +171,39 @@ const EmployeeScanner = () => {
               Refresh Status
             </button>
           </div>
-        ) : scanning ? (
+        ) : !scanning && !resultMessage ? (
+          <div className="w-full max-w-sm bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center mt-10">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6 bg-teal-50 text-teal-600">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            </div>
+            <h2 className="text-xl font-bold text-gray-800 mb-2">Ready to Scan?</h2>
+            <p className="text-gray-500 text-sm mb-8">
+              Click the button below to open your camera and scan the manager's attendance QR code.
+            </p>
+
+            {permissionDenied && (
+              <div className="bg-red-50 text-red-700 text-sm p-4 rounded-xl mb-6 text-left border border-red-100">
+                <p className="font-bold mb-1">Camera Access Blocked</p>
+                <p>We couldn't access your camera. Please tap the <strong>lock icon (🔒)</strong> in your address bar, allow Camera access, and try again.</p>
+              </div>
+            )}
+
+            <button
+              onClick={requestCameraAndStart}
+              className="w-full bg-teal-700 text-white font-bold py-4 rounded-2xl hover:bg-teal-800 transition shadow-md shadow-teal-900/10 flex items-center justify-center space-x-2"
+            >
+              <span>Open Camera</span>
+            </button>
+          </div>
+        ) : scanning && hasPermission ? (
           <div className="w-full max-w-sm">
-            <h2 className="text-gray-800 font-bold text-center text-lg mb-2">Mark Attendance</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-gray-800 font-bold text-lg">Mark Attendance</h2>
+              <button onClick={handleReset} className="text-sm font-semibold text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full">Cancel</button>
+            </div>
             <p className="text-gray-500 text-sm text-center mb-6">Point your camera at the Manager's QR Code.</p>
 
-            <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-              {/* Container for html5-qrcode */}
+            <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 overflow-hidden relative">
               <div id="qr-reader" className="w-full rounded-2xl overflow-hidden [&>video]:object-cover [&>video]:rounded-2xl"></div>
             </div>
           </div>

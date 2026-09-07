@@ -17,6 +17,9 @@ import EmployeeScanner from './pages/EmployeeScanner';
 import EmployeeCalendar from './pages/EmployeeCalendar';
 import EmployeeSalary from './pages/EmployeeSalary';
 import InvitePage from './pages/InvitePage'
+import Home from './pages/Home'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import TermsAndConditions from './pages/TermsAndConditions'
 import { ToastProvider } from './components/Toast'
 import ProtectedRoute from './components/ProtectedRoute'
 
@@ -45,6 +48,18 @@ const router = createBrowserRouter([
       {
         path: "/invite/:token",
         element: <InvitePage />
+      },
+      {
+        path: "/home",
+        element: <Home />
+      },
+      {
+        path: "/privacyPolicy",
+        element: <PrivacyPolicy />
+      },
+      {
+        path: "/termsAndConditions",
+        element: <TermsAndConditions />
       },
       // Manager-only routes
       {

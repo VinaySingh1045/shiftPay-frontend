@@ -8,6 +8,7 @@ const EmployeeScanner = () => {
   const [scanning, setScanning] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [permissionDenied, setPermissionDenied] = useState(false);
+  const [permissionErrorMsg, setPermissionErrorMsg] = useState<string>('');
   const [status, setStatus] = useState<'active' | 'inactive' | null>(null);
   const [companyName, setCompanyName] = useState<string>('');
   const [loading, setLoading] = useState(true);
@@ -19,8 +20,19 @@ const EmployeeScanner = () => {
 
   const requestCameraAndStart = async () => {
     try {
-      // Explicitly request camera permission first
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error("Your browser does not support camera access.");
+      }
+
+      let stream;
+      try {
+        // Explicitly request back camera first
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      } catch (err) {
+        // Fallback to any camera if back camera specifically is not found (fixes OverconstrainedError)
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      }
+
       // Stop the test stream, we just wanted the permission
       stream.getTracks().forEach(track => track.stop());
       
@@ -28,8 +40,9 @@ const EmployeeScanner = () => {
       setHasPermission(true);
       setScanning(true);
       setResultMessage(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Camera permission denied:", error);
+      setPermissionErrorMsg(error.message || error.name || "Unknown error");
       setPermissionDenied(true);
       setHasPermission(false);
     }
@@ -184,7 +197,8 @@ const EmployeeScanner = () => {
             {permissionDenied && (
               <div className="bg-red-50 text-red-700 text-sm p-4 rounded-xl mb-6 text-left border border-red-100">
                 <p className="font-bold mb-1">Camera Access Blocked</p>
-                <p>We couldn't access your camera. Please tap the <strong>lock icon (🔒)</strong> in your address bar, allow Camera access, and try again.</p>
+                <p className="mb-2">We couldn't access your camera. Please tap the <strong>lock icon (🔒)</strong> in your address bar, allow Camera access, and try again.</p>
+                <p className="text-xs font-mono bg-red-100 p-2 rounded text-red-800 break-words">Error: {permissionErrorMsg}</p>
               </div>
             )}
 

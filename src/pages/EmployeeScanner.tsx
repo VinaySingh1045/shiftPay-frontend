@@ -1,11 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Html5QrcodeScanner, Html5QrcodeScanType } from 'html5-qrcode';
-import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import { useToast } from '../components/Toast';
 
 const EmployeeScanner = () => {
-  const navigate = useNavigate();
   const { showToast } = useToast();
   const [scanning, setScanning] = useState(true);
   const [status, setStatus] = useState<'active' | 'inactive' | null>(null);
@@ -13,7 +11,7 @@ const EmployeeScanner = () => {
   const [loading, setLoading] = useState(true);
   const [resultMessage, setResultMessage] = useState<{ type: 'success' | 'error', text: string, details?: string } | null>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  
+
   // Ref to ensure we only initialize the scanner once
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
@@ -37,13 +35,13 @@ const EmployeeScanner = () => {
 
     // Initialize scanner
     const html5QrcodeScanner = new Html5QrcodeScanner(
-      "qr-reader", 
-      { 
-        fps: 10, 
+      "qr-reader",
+      {
+        fps: 10,
         qrbox: { width: 250, height: 250 },
         supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
         aspectRatio: 1.0
-      }, 
+      },
       false
     );
 
@@ -58,16 +56,16 @@ const EmployeeScanner = () => {
 
       try {
         const res = await api.post('/employees/scan', { token: decodedText });
-        setResultMessage({ 
-          type: 'success', 
+        setResultMessage({
+          type: 'success',
           text: res.data.message,
           details: `Shift: ${res.data.shift} | Date: ${res.data.date}`
         });
         showToast('Successfully marked present!', 'success');
       } catch (error: any) {
-        setResultMessage({ 
-          type: 'error', 
-          text: error?.response?.data?.error || 'Failed to scan QR code.' 
+        setResultMessage({
+          type: 'error',
+          text: error?.response?.data?.error || 'Failed to scan QR code.'
         });
         showToast('Scan failed', 'error');
       } finally {
@@ -77,7 +75,7 @@ const EmployeeScanner = () => {
       }
     };
 
-    const onScanFailure = (error: any) => {
+    const onScanFailure = (_error: any) => {
       // Ignore routine scan failures (e.g. no QR in frame)
     };
 
@@ -101,7 +99,7 @@ const EmployeeScanner = () => {
       {/* HEADER */}
       <header className="bg-teal-800 text-white p-6 rounded-b-3xl shadow-sm flex justify-between items-center">
         <h1 className="text-xl font-bold">Employee Scanner</h1>
-        <button 
+        <button
           onClick={() => setShowLogoutConfirm(true)}
           className="text-xs font-semibold bg-teal-900 px-3 py-1.5 rounded-full"
         >
@@ -145,7 +143,7 @@ const EmployeeScanner = () => {
             <p className="text-gray-600 mb-6">
               You have requested to join <strong>{companyName}</strong>. Please wait for your manager to verify and approve your account.
             </p>
-            <button 
+            <button
               onClick={() => window.location.reload()}
               className="w-full bg-teal-700 text-white font-bold py-3 rounded-xl hover:bg-teal-800 transition shadow-sm"
             >
@@ -156,9 +154,9 @@ const EmployeeScanner = () => {
           <div className="w-full max-w-sm">
             <h2 className="text-gray-800 font-bold text-center text-lg mb-2">Mark Attendance</h2>
             <p className="text-gray-500 text-sm text-center mb-6">Point your camera at the Manager's QR Code.</p>
-            
+
             <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-               {/* Container for html5-qrcode */}
+              {/* Container for html5-qrcode */}
               <div id="qr-reader" className="w-full rounded-2xl overflow-hidden [&>video]:object-cover [&>video]:rounded-2xl"></div>
             </div>
           </div>
@@ -178,8 +176,8 @@ const EmployeeScanner = () => {
             {resultMessage.details && (
               <p className="text-xs font-semibold text-gray-400 bg-gray-50 px-3 py-1 rounded-md mb-6">{resultMessage.details}</p>
             )}
-            
-            <button 
+
+            <button
               onClick={handleReset}
               className="w-full bg-teal-700 text-white font-bold py-3 rounded-xl hover:bg-teal-800 transition shadow-sm"
             >

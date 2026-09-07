@@ -64,10 +64,11 @@ const PeoplePage = () => {
 
   const [activeTab, setActiveTab] = useState<'active' | 'inactive' | 'deactivated'>('active');
 
+  const [roleName, setRoleName] = useState('');
   const [roleWage, setRoleWage] = useState('');
 
   const [editRoleModal, setEditRoleModal] = useState<{ open: boolean; assignmentId: string; roleId: string }>({ open: false, assignmentId: '', roleId: '' });
-  const [roleSheet, setRoleSheet] = useState<{ open: boolean; value: string; onChange: (val: string) => void }>({ open: false, value: '', onChange: () => {} });
+  const [roleSheet, setRoleSheet] = useState<{ open: boolean; value: string; onChange: (val: string) => void }>({ open: false, value: '', onChange: () => { } });
 
   useEffect(() => {
     if (companyId) fetchData();
@@ -177,7 +178,8 @@ const PeoplePage = () => {
         name: roleName, wagePerShift: Number(roleWage),
       });
       setModal('none');
-      setRoleName(''); setRoleWage('');
+      setRoleName('');
+      setRoleWage('');
       fetchData();
     } catch (error: any) {
       showToast(error?.response?.data?.error || 'Failed to add role', 'error');
@@ -303,15 +305,15 @@ const PeoplePage = () => {
         {/* Search Bar */}
         <div className="mt-3 relative">
           <svg className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-teal-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-          <input 
-            type="text" 
-            placeholder="Search employees..." 
+          <input
+            type="text"
+            placeholder="Search employees..."
             className="w-full bg-teal-700/50 border border-teal-600 text-white text-sm py-2 pl-10 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-400 placeholder-teal-300"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           {searchQuery && (
-            <button 
+            <button
               onClick={() => setSearchQuery('')}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-teal-200 hover:text-white"
             >
@@ -392,7 +394,7 @@ const PeoplePage = () => {
                   <input className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Full Name *" value={empName} onChange={e => setEmpName(e.target.value)} required />
                   <input className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" type="email" placeholder="Email (for auto-link)" value={empEmail} onChange={e => setEmpEmail(e.target.value)} />
                   <input className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Phone" value={empPhone} onChange={e => setEmpPhone(e.target.value)} />
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setRoleSheet({ open: true, value: empRoleId, onChange: setEmpRoleId })}
                     className="w-full border border-gray-200 p-3 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 text-left flex justify-between items-center"
@@ -423,7 +425,7 @@ const PeoplePage = () => {
             <h2 className="text-xl font-bold mb-1 text-gray-800">Change Role</h2>
             <p className="text-sm text-gray-500 mb-5">Update the role for this employee.</p>
             <form onSubmit={handleEditRole} className="space-y-4">
-              <button 
+              <button
                 type="button"
                 onClick={() => setRoleSheet({ open: true, value: editRoleModal.roleId, onChange: (val) => setEditRoleModal(m => ({ ...m, roleId: val })) })}
                 className="w-full border border-gray-200 p-3 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 text-left flex justify-between items-center"
@@ -464,11 +466,10 @@ const PeoplePage = () => {
                       roleSheet.onChange(r._id);
                       setRoleSheet({ ...roleSheet, open: false });
                     }}
-                    className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl text-left transition-colors ${
-                      isActive
+                    className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl text-left transition-colors ${isActive
                         ? 'bg-teal-700 text-white'
                         : 'bg-gray-50 text-gray-800 hover:bg-teal-50 active:bg-teal-100'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center">
                       <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm mr-3 ${isActive ? 'bg-white/20 text-white' : 'bg-teal-100 text-teal-800'}`}>
@@ -551,59 +552,59 @@ const PeoplePage = () => {
             {employees
               .filter(e => e.employee.name.toLowerCase().includes(searchQuery.toLowerCase()))
               .map(({ assignmentId, employee, role, joiningDate }) => (
-              <div key={assignmentId} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center space-x-4">
-                <div className="w-11 h-11 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center text-sm font-bold flex-shrink-0">
-                  {getInitials(employee?.name || '?')}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-800 truncate">{employee?.name || 'Unknown Employee'}</p>
-                  <div className="flex items-center text-xs text-gray-400">
-                    <span>{role?.name || 'Unknown'} · ₹{role?.wagePerShift}/shift</span>
-                    <button 
-                      onClick={() => setEditRoleModal({ open: true, assignmentId, roleId: role._id })}
-                      className="ml-2 p-1 text-teal-600 hover:bg-teal-50 rounded-full"
-                    >
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                    </button>
+                <div key={assignmentId} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center space-x-4">
+                  <div className="w-11 h-11 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center text-sm font-bold flex-shrink-0">
+                    {getInitials(employee?.name || '?')}
                   </div>
-                  {employee?.email && <p className="text-xs text-gray-400 truncate">{employee.email}</p>}
-                </div>
-                <div className="text-right flex-shrink-0 flex flex-col items-end justify-center space-y-1">
-                  {activeTab === 'inactive' ? (
-                    <button
-                      onClick={() => handleApprove(assignmentId)}
-                      className="bg-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-orange-600 shadow-sm"
-                    >
-                      Approve
-                    </button>
-                  ) : activeTab === 'deactivated' ? (
-                    <button
-                      onClick={() => handleReactivate(assignmentId)}
-                      className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-full transition-colors"
-                      title="Reactivate Employee"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                    </button>
-                  ) : (
-                    <div className="flex items-center space-x-2">
-                      <div className="text-right mr-2">
-                        <p className="text-xs text-gray-400">Since</p>
-                        <p className="text-xs font-semibold text-gray-600">
-                          {new Date(joiningDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' })}
-                        </p>
-                      </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-800 truncate">{employee?.name || 'Unknown Employee'}</p>
+                    <div className="flex items-center text-xs text-gray-400">
+                      <span>{role?.name || 'Unknown'} · ₹{role?.wagePerShift}/shift</span>
                       <button
-                        onClick={() => handleDeactivate(assignmentId)}
-                        className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
-                        title="Deactivate Employee"
+                        onClick={() => setEditRoleModal({ open: true, assignmentId, roleId: role._id })}
+                        className="ml-2 p-1 text-teal-600 hover:bg-teal-50 rounded-full"
                       >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                       </button>
                     </div>
-                  )}
+                    {employee?.email && <p className="text-xs text-gray-400 truncate">{employee.email}</p>}
+                  </div>
+                  <div className="text-right flex-shrink-0 flex flex-col items-end justify-center space-y-1">
+                    {activeTab === 'inactive' ? (
+                      <button
+                        onClick={() => handleApprove(assignmentId)}
+                        className="bg-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-orange-600 shadow-sm"
+                      >
+                        Approve
+                      </button>
+                    ) : activeTab === 'deactivated' ? (
+                      <button
+                        onClick={() => handleReactivate(assignmentId)}
+                        className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-full transition-colors"
+                        title="Reactivate Employee"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                      </button>
+                    ) : (
+                      <div className="flex items-center space-x-2">
+                        <div className="text-right mr-2">
+                          <p className="text-xs text-gray-400">Since</p>
+                          <p className="text-xs font-semibold text-gray-600">
+                            {new Date(joiningDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' })}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => handleDeactivate(assignmentId)}
+                          className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                          title="Deactivate Employee"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         )}
       </main>

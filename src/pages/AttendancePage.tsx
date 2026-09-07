@@ -10,6 +10,7 @@ import moment from 'moment-timezone';
 interface Role {
   _id: string;
   name: string;
+  wagePerShift?: number;
 }
 
 interface AttendanceRecord {

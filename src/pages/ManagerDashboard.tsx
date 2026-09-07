@@ -14,8 +14,6 @@ interface Company {
   status: string;
 }
 
-type ActiveTab = 'home';
-
 const ManagerDashboard = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   const activeCompanyId = useSelector((state: RootState) => state.auth.activeCompanyId);

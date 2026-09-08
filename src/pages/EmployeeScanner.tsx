@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Html5QrcodeScanner, Html5QrcodeScanType } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 import api from '../api/axios';
 import { useToast } from '../components/Toast';
 
@@ -16,37 +16,8 @@ const EmployeeScanner = () => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   // Ref to ensure we only initialize the scanner once
-  const scannerRef = useRef<Html5QrcodeScanner | null>(null);
+  const scannerRef = useRef<Html5Qrcode | null>(null);
 
-  // const requestCameraAndStart = async () => {
-  //   try {
-  //     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-  //       throw new Error("Your browser does not support camera access.");
-  //     }
-
-  //     let stream;
-  //     try {
-  //       // Explicitly request back camera first
-  //       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-  //     } catch (err) {
-  //       // Fallback to any camera if back camera specifically is not found (fixes OverconstrainedError)
-  //       stream = await navigator.mediaDevices.getUserMedia({ video: true });
-  //     }
-
-  //     // Stop the test stream, we just wanted the permission
-  //     stream.getTracks().forEach(track => track.stop());
-
-  //     setPermissionDenied(false);
-  //     setHasPermission(true);
-  //     setScanning(true);
-  //     setResultMessage(null);
-  //   } catch (error: any) {
-  //     console.error("Camera permission denied:", error);
-  //     setPermissionErrorMsg(error.message || error.name || "Unknown error");
-  //     setPermissionDenied(true);
-  //     setHasPermission(false);
-  //   }
-  // };
   const requestCameraAndStart = async () => {
     try {
       console.log("Secure context:", window.isSecureContext);
@@ -107,24 +78,13 @@ const EmployeeScanner = () => {
   useEffect(() => {
     if (!scanning || loading || status === 'inactive') return;
 
-    // Initialize scanner
-    const html5QrcodeScanner = new Html5QrcodeScanner(
-      "qr-reader",
-      {
-        fps: 10,
-        qrbox: { width: 250, height: 250 },
-        supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
-        aspectRatio: 1.0
-      },
-      false
-    );
-
-    scannerRef.current = html5QrcodeScanner;
+    const html5QrCode = new Html5Qrcode("qr-reader");
+    scannerRef.current = html5QrCode;
 
     const onScanSuccess = async (decodedText: string) => {
       // Pause scanning immediately to prevent duplicate requests
-      if (scannerRef.current) {
-        scannerRef.current.pause(true);
+      if (scannerRef.current && scannerRef.current.isScanning) {
+        scannerRef.current.pause();
       }
       setScanning(false);
 
@@ -143,8 +103,10 @@ const EmployeeScanner = () => {
         });
         showToast('Scan failed', 'error');
       } finally {
-        if (scannerRef.current) {
-          scannerRef.current.clear().catch(console.error);
+        if (scannerRef.current && scannerRef.current.isScanning) {
+          scannerRef.current.stop().then(() => {
+            scannerRef.current?.clear();
+          }).catch(console.error);
         }
       }
     };
@@ -153,12 +115,41 @@ const EmployeeScanner = () => {
       // Ignore routine scan failures (e.g. no QR in frame)
     };
 
-    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+    const startScanner = async () => {
+      try {
+        await html5QrCode.start(
+          { facingMode: "environment" },
+          {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0
+          },
+          onScanSuccess,
+          onScanFailure
+        );
+      } catch (err) {
+        console.warn("Failed to start environment camera. Falling back.", err);
+        try {
+          await html5QrCode.start(
+            { facingMode: "user" },
+            { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 },
+            onScanSuccess,
+            onScanFailure
+          );
+        } catch (fallbackErr) {
+          console.error("Camera failed entirely:", fallbackErr);
+        }
+      }
+    };
+
+    startScanner();
 
     // Cleanup on unmount
     return () => {
-      if (scannerRef.current) {
-        scannerRef.current.clear().catch(console.error);
+      if (scannerRef.current && scannerRef.current.isScanning) {
+        scannerRef.current.stop().then(() => {
+          scannerRef.current?.clear();
+        }).catch(console.error);
       }
     };
   }, [scanning, status, loading, showToast]);

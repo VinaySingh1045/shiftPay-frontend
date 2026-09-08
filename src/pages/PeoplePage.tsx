@@ -529,7 +529,18 @@ const PeoplePage = () => {
 
 
         {loading ? (
-          <div className="flex justify-center items-center pt-20 text-gray-400">Loading...</div>
+          <div className="space-y-3 w-full">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center space-x-4 animate-pulse">
+                <div className="w-11 h-11 bg-gray-200 rounded-full flex-shrink-0"></div>
+                <div className="flex-1 space-y-2 py-1">
+                  <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                  <div className="h-3 bg-gray-100 rounded w-1/4"></div>
+                </div>
+                <div className="w-8 h-8 bg-gray-100 rounded-full"></div>
+              </div>
+            ))}
+          </div>
         ) : employees.length === 0 ? (
           <div className="flex flex-col items-center justify-center pt-20 text-center">
             <div className={`p-4 rounded-full mb-4 ${activeTab === 'inactive' ? 'bg-orange-100 text-orange-600' : activeTab === 'deactivated' ? 'bg-gray-100 text-gray-500' : 'bg-teal-100 text-teal-600'}`}>

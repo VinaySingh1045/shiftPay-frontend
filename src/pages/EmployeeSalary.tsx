@@ -90,7 +90,23 @@ const EmployeeSalary = () => {
         </div>
 
         {loading ? (
-          <div className="flex justify-center items-center pt-20 text-gray-400">Loading...</div>
+          <div className="space-y-4 animate-pulse">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-white rounded-3xl shadow-sm border border-gray-100 h-28"></div>
+              <div className="bg-white rounded-3xl shadow-sm border border-gray-100 h-28"></div>
+            </div>
+            <div className="bg-teal-700/30 rounded-3xl shadow-sm h-32"></div>
+            
+            <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
+              <div className="h-3 w-1/3 bg-gray-200 rounded mb-5"></div>
+              <div className="grid grid-cols-4 gap-2">
+                <div className="flex flex-col items-center space-y-2"><div className="h-2 w-3/4 bg-gray-100 rounded"></div><div className="h-5 w-1/2 bg-gray-200 rounded"></div></div>
+                <div className="flex flex-col items-center space-y-2"><div className="h-2 w-3/4 bg-gray-100 rounded"></div><div className="h-5 w-1/2 bg-gray-200 rounded"></div></div>
+                <div className="flex flex-col items-center space-y-2"><div className="h-2 w-3/4 bg-gray-100 rounded"></div><div className="h-5 w-1/2 bg-gray-200 rounded"></div></div>
+                <div className="flex flex-col items-center space-y-2"><div className="h-2 w-3/4 bg-gray-100 rounded"></div><div className="h-5 w-1/2 bg-gray-200 rounded"></div></div>
+              </div>
+            </div>
+          </div>
         ) : !salaryData ? (
           <div className="flex justify-center items-center pt-20 text-gray-400">No data available</div>
         ) : (

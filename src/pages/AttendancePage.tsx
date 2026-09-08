@@ -199,7 +199,26 @@ const AttendancePage = () => {
       {/* CONTENT */}
       <main className="flex-1 px-4 pt-6 space-y-4">
         {loading ? (
-          <div className="flex justify-center items-center pt-20 text-gray-400">Loading...</div>
+          <div className="space-y-4 w-full">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 space-y-4 animate-pulse">
+                <div className="flex items-start space-x-4">
+                  <div className="w-11 h-11 bg-gray-200 rounded-full flex-shrink-0"></div>
+                  <div className="flex-1 space-y-2 py-1">
+                    <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                    <div className="h-3 bg-gray-100 rounded w-1/4"></div>
+                  </div>
+                  <div className="h-6 w-16 bg-gray-200 rounded-full"></div>
+                </div>
+                <div className="grid grid-cols-4 gap-2 pt-2">
+                  <div className="h-8 bg-gray-100 rounded-lg"></div>
+                  <div className="h-8 bg-gray-100 rounded-lg"></div>
+                  <div className="h-8 bg-gray-100 rounded-lg"></div>
+                  <div className="h-8 bg-gray-100 rounded-lg"></div>
+                </div>
+              </div>
+            ))}
+          </div>
         ) : rows.length === 0 ? (
           <div className="flex flex-col items-center justify-center pt-20 text-center">
             <div className="bg-teal-100 p-4 rounded-full mb-4">

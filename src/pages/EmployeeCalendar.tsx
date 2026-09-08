@@ -198,7 +198,24 @@ const EmployeeCalendar = () => {
           </div>
 
           {loading ? (
-            <div className="h-64 flex items-center justify-center text-gray-400">Loading...</div>
+            <div className="animate-pulse">
+              <div className="grid grid-cols-7 mb-2">
+                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
+                  <div key={idx} className="text-center text-xs font-bold text-gray-300 mb-2">{day}</div>
+                ))}
+              </div>
+              <div className="space-y-4">
+                {[1, 2, 3, 4, 5].map((row) => (
+                  <div key={row} className="grid grid-cols-7 gap-1">
+                    {[1, 2, 3, 4, 5, 6, 7].map((col) => (
+                      <div key={col} className="flex justify-center">
+                        <div className="w-10 h-10 bg-gray-100 rounded-full"></div>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
           ) : (
             <div>
               <div className="grid grid-cols-7 mb-2">

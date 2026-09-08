@@ -199,7 +199,13 @@ const EmployeeScanner = () => {
       {/* CONTENT */}
       <div className="flex-1 flex flex-col items-center px-4 pt-6 pb-6">
         {loading ? (
-          <div className="flex justify-center items-center pt-20 text-gray-400">Loading...</div>
+          <div className="w-full max-w-sm bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center mt-10 animate-pulse">
+            <div className="w-16 h-16 rounded-full bg-gray-200 mb-6"></div>
+            <div className="h-6 bg-gray-200 rounded w-2/3 mb-4"></div>
+            <div className="h-4 bg-gray-100 rounded w-full mb-2"></div>
+            <div className="h-4 bg-gray-100 rounded w-5/6 mb-8"></div>
+            <div className="w-full h-12 bg-gray-200 rounded-xl"></div>
+          </div>
         ) : status === 'inactive' ? (
           <div className="w-full max-w-sm bg-white p-8 rounded-3xl shadow-sm border border-orange-100 flex flex-col items-center text-center mt-10">
             <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-orange-50 text-orange-500">

@@ -73,9 +73,7 @@ const ManagerQRPage = () => {
                 className="rounded-xl"
               />
             ) : (
-              <div className="w-[220px] h-[220px] flex items-center justify-center bg-gray-100 rounded-xl">
-                <p className="text-gray-400 font-semibold">Loading...</p>
-              </div>
+              <div className="w-[220px] h-[220px] bg-gray-200 rounded-xl animate-pulse"></div>
             )}
           </div>
 

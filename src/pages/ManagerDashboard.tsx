@@ -92,7 +92,36 @@ const ManagerDashboard = () => {
     }
   };
 
-  if (loading) return <div className="flex h-screen items-center justify-center bg-gray-50">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen bg-gray-50 pb-20 font-sans animate-pulse">
+        <header className="bg-teal-800 p-4 rounded-b-2xl shadow-sm h-20"></header>
+        <main className="flex-1 px-4 pt-6 space-y-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-24"></div>
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-24"></div>
+          </div>
+          <div>
+            <div className="h-3 bg-gray-200 rounded w-1/3 mb-3"></div>
+            <div className="space-y-3">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-20"></div>
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-20"></div>
+            </div>
+          </div>
+          <div>
+            <div className="h-3 bg-gray-200 rounded w-1/4 mb-3"></div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-24"></div>
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-24"></div>
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-24"></div>
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-24"></div>
+            </div>
+          </div>
+        </main>
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 h-16"></div>
+      </div>
+    );
+  }
 
   const navItems = [
     { name: 'Home', path: '/manager', icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z', active: true },

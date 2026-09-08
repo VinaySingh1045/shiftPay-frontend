@@ -70,6 +70,8 @@ const PeoplePage = () => {
   const [editRoleModal, setEditRoleModal] = useState<{ open: boolean; assignmentId: string; roleId: string }>({ open: false, assignmentId: '', roleId: '' });
   const [roleSheet, setRoleSheet] = useState<{ open: boolean; value: string; onChange: (val: string) => void }>({ open: false, value: '', onChange: () => { } });
 
+  const [editRoleDetailsModal, setEditRoleDetailsModal] = useState<{ open: boolean; roleId: string; name: string; wagePerShift: string }>({ open: false, roleId: '', name: '', wagePerShift: '' });
+
   useEffect(() => {
     if (companyId) fetchData();
     else setLoading(false);
@@ -205,6 +207,28 @@ const PeoplePage = () => {
     }
   };
 
+  const handleEditRoleDetails = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editRoleDetailsModal.name || !editRoleDetailsModal.wagePerShift) return;
+    setSubmitting(true);
+    try {
+      await api.patch(`/companies/${companyId}/roles/${editRoleDetailsModal.roleId}`, {
+        name: editRoleDetailsModal.name, 
+        wagePerShift: Number(editRoleDetailsModal.wagePerShift),
+      });
+      showToast('Role details updated successfully', 'success');
+      setEditRoleDetailsModal({ open: false, roleId: '', name: '', wagePerShift: '' });
+      fetchData();
+    } catch (error: any) {
+      showToast(error?.response?.data?.error || 'Failed to update role details', 'error');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Temp log to prevent 'never used' build error while edit icon is hidden
+  console.log(handleEditRoleDetails);
+
   const downloadTemplate = () => {
     const ws = XLSX.utils.aoa_to_sheet([
       ['name', 'email', 'phone', 'role', 'joiningDate'],
@@ -258,8 +282,10 @@ const PeoplePage = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 pb-20 font-sans">
-      {/* HEADER */}
-      <header className="bg-teal-800 text-white px-4 pt-4 pb-3 rounded-b-2xl shadow-sm">
+      {/* STICKY TOP SECTION */}
+      <div className="sticky top-0 z-30 bg-gray-50 shadow-sm pb-2">
+        {/* HEADER */}
+        <header className="bg-teal-800 text-white px-4 pt-4 pb-3 rounded-b-2xl shadow-sm relative z-10">
         {/* Row 1: Title + Primary Action */}
         <div className="flex justify-between items-center mb-3">
           <h1 className="text-xl font-bold">People</h1>
@@ -323,7 +349,52 @@ const PeoplePage = () => {
         </div>
       </header>
 
+      <div className="px-4 bg-gray-50 pt-3">
+        {/* TABS */}
+        <div className="flex space-x-4 border-b border-gray-200">
+          <button
+            onClick={() => setActiveTab('active')}
+            className={`pb-2 text-sm font-semibold border-b-2 transition-colors ${activeTab === 'active' ? 'border-teal-700 text-teal-800' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+          >
+            Active
+          </button>
+          <button
+            onClick={() => setActiveTab('inactive')}
+            className={`pb-2 text-sm font-semibold border-b-2 transition-colors ${activeTab === 'inactive' ? 'border-orange-500 text-orange-600' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+          >
+            Unverified
+          </button>
+          <button
+            onClick={() => setActiveTab('deactivated')}
+            className={`pb-2 text-sm font-semibold border-b-2 transition-colors ${activeTab === 'deactivated' ? 'border-gray-500 text-gray-700' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+          >
+            Inactive
+          </button>
+        </div>
 
+        {roles.length > 0 && (
+          <div className="flex space-x-2 overflow-x-auto pb-1 mt-2">
+            {roles.map(r => (
+              <div key={r._id} className="flex-shrink-0 bg-teal-50 border border-teal-100 px-3 py-1.5 rounded-full text-sm text-teal-800 font-medium flex items-center">
+                {r.name} · ₹{r.wagePerShift}
+                {/* 
+                <button 
+                  onClick={() => setEditRoleDetailsModal({ open: true, roleId: r._id, name: r.name, wagePerShift: r.wagePerShift.toString() })}
+                  className="ml-2 text-teal-600 hover:text-teal-800 focus:outline-none"
+                  title="Edit Role"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                </button>
+                */}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      </div>
+
+      {/* CONTENT */}
+      <main className="flex-1 px-4 pt-4 space-y-4">
       {/* CONFIRM MODAL */}
       {confirm.open && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -444,6 +515,23 @@ const PeoplePage = () => {
         </div>
       )}
 
+      {editRoleDetailsModal.open && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-xl">
+            <h2 className="text-xl font-bold mb-1 text-gray-800">Edit Role Details</h2>
+            <p className="text-sm text-gray-500 mb-5">Updates wage for future shifts. Past calculations remain unaffected.</p>
+            <form onSubmit={handleEditRoleDetails} className="space-y-4">
+              <input className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Role Name" value={editRoleDetailsModal.name} onChange={e => setEditRoleDetailsModal(m => ({ ...m, name: e.target.value }))} required />
+              <input className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" type="number" placeholder="Wage per Shift (₹)" value={editRoleDetailsModal.wagePerShift} onChange={e => setEditRoleDetailsModal(m => ({ ...m, wagePerShift: e.target.value }))} required min="0" />
+              <div className="flex space-x-3 pt-2">
+                <button type="button" onClick={() => setEditRoleDetailsModal({ open: false, roleId: '', name: '', wagePerShift: '' })} className="flex-1 py-3 text-gray-600 font-semibold bg-gray-100 rounded-xl">Cancel</button>
+                <button type="submit" disabled={submitting} className="flex-1 py-3 text-white font-semibold bg-teal-700 rounded-xl disabled:opacity-60">{submitting ? 'Saving...' : 'Save Changes'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* ROLE SELECTION BOTTOM SHEET */}
       {roleSheet.open && (
         <div className="fixed inset-0 z-[60] flex flex-col justify-end" onClick={() => setRoleSheet({ ...roleSheet, open: false })}>
@@ -492,41 +580,6 @@ const PeoplePage = () => {
           </div>
         </div>
       )}
-
-      {/* CONTENT */}
-      <main className="flex-1 px-4 pt-4 space-y-4">
-        {/* TABS */}
-        <div className="flex space-x-4 border-b border-gray-200">
-          <button
-            onClick={() => setActiveTab('active')}
-            className={`pb-2 text-sm font-semibold border-b-2 transition-colors ${activeTab === 'active' ? 'border-teal-700 text-teal-800' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
-          >
-            Active
-          </button>
-          <button
-            onClick={() => setActiveTab('inactive')}
-            className={`pb-2 text-sm font-semibold border-b-2 transition-colors ${activeTab === 'inactive' ? 'border-orange-500 text-orange-600' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
-          >
-            Unverified
-          </button>
-          <button
-            onClick={() => setActiveTab('deactivated')}
-            className={`pb-2 text-sm font-semibold border-b-2 transition-colors ${activeTab === 'deactivated' ? 'border-gray-500 text-gray-700' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
-          >
-            Inactive
-          </button>
-        </div>
-
-        {roles.length > 0 && (
-          <div className="flex space-x-2 overflow-x-auto pb-1 mt-2">
-            {roles.map(r => (
-              <div key={r._id} className="flex-shrink-0 bg-teal-50 border border-teal-100 px-3 py-1.5 rounded-full text-sm text-teal-800 font-medium">
-                {r.name} · ₹{r.wagePerShift}
-              </div>
-            ))}
-          </div>
-        )}
-
 
         {loading ? (
           <div className="space-y-3 w-full">

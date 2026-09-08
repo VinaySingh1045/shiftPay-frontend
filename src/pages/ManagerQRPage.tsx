@@ -51,12 +51,14 @@ const ManagerQRPage = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 pb-20 font-sans">
-      <header className="bg-teal-800 text-white p-4 flex items-center shadow-sm">
-        <button onClick={() => navigate('/manager')} className="text-white mr-4">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-        </button>
-        <h1 className="text-xl font-bold">Attendance QR</h1>
-      </header>
+      <div className="sticky top-0 z-30">
+        <header className="bg-teal-800 text-white p-4 flex items-center shadow-sm">
+          <button onClick={() => navigate('/manager')} className="text-white mr-4">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+          </button>
+          <h1 className="text-xl font-bold">Attendance QR</h1>
+        </header>
+      </div>
 
       <main className="flex-1 px-6 pt-10 flex flex-col items-center">
         <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center w-full max-w-sm">

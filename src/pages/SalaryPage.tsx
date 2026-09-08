@@ -251,10 +251,12 @@ const SalaryPage = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 pb-20 font-sans">
-      {/* HEADER */}
-      <header className="bg-teal-800 text-white p-4 rounded-b-2xl shadow-sm">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-xl font-bold">Salary Engine</h1>
+      {/* STICKY TOP SECTION */}
+      <div className="sticky top-0 z-30">
+        {/* HEADER */}
+        <header className="bg-teal-800 text-white p-4 rounded-b-2xl shadow-sm relative z-10">
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-xl font-bold">Salary Engine</h1>
           <div className="flex items-center space-x-2">
             <CompanySelector />
             {rows.length > 0 && (
@@ -337,7 +339,8 @@ const SalaryPage = () => {
             </button>
           )}
         </div>
-      </header>
+        </header>
+      </div>
 
       {/* CLOSE MONTH CONFIRMATION MODAL */}
       {closeMonthModal && (

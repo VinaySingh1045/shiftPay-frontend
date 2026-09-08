@@ -133,26 +133,28 @@ const ManagerDashboard = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 pb-20 font-sans">
       {/* HEADER */}
-      <header className="bg-teal-800 text-white p-4 rounded-b-2xl shadow-sm z-10">
-        <div className="flex justify-between items-start">
-          <div>
-            <div className="flex items-center space-x-2">
-              <h1 className="text-xl font-bold">Hello, {user?.name?.split(' ')[0] || 'Manager'}</h1>
+      <div className="sticky top-0 z-30">
+        <header className="bg-teal-800 text-white p-4 rounded-b-2xl shadow-sm relative z-10">
+          <div className="flex justify-between items-start">
+            <div>
+              <div className="flex items-center space-x-2">
+                <h1 className="text-xl font-bold">Hello, {user?.name?.split(' ')[0] || 'Manager'}</h1>
+              </div>
+              <p className="text-teal-100 text-sm opacity-90 mt-0.5">
+                {new Date().toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
+              </p>
             </div>
-            <p className="text-teal-100 text-sm opacity-90 mt-0.5">
-              {new Date().toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
-            </p>
-          </div>
-          <div className='flex items-center gap-4'>
-            <div className="relative">
-              <CompanySelector onAddCompany={() => setShowAddForm(true)} />
+            <div className='flex items-center gap-4'>
+              <div className="relative">
+                <CompanySelector onAddCompany={() => setShowAddForm(true)} />
+              </div>
+              <button onClick={handleLogout} className="p-1 rounded-full bg-teal-700/50 hover:bg-teal-600 transition-colors text-teal-100" title="Logout">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+              </button>
             </div>
-            <button onClick={handleLogout} className="p-1 rounded-full bg-teal-700/50 hover:bg-teal-600 transition-colors text-teal-100" title="Logout">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-            </button>
           </div>
-        </div>
-      </header>
+        </header>
+      </div>
 
       {/* ADD COMPANY MODAL */}
       {showAddForm && (

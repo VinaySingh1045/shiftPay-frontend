@@ -112,15 +112,18 @@ const EmployeeCalendar = () => {
 
   return (
     <div className="flex flex-col h-full">
-      {/* HEADER */}
-      <header className="bg-teal-800 text-white p-6 rounded-b-3xl shadow-sm flex items-center justify-between">
-        <h1 className="text-xl font-bold">My Calendar</h1>
-        <button onClick={() => setShowLegend(true)} className="p-2 bg-teal-700 rounded-full hover:bg-teal-600">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </button>
-      </header>
+      {/* STICKY TOP SECTION */}
+      <div className="sticky top-0 z-30">
+        {/* HEADER */}
+        <header className="bg-teal-800 text-white p-6 rounded-b-3xl shadow-sm flex items-center justify-between relative z-10">
+          <h1 className="text-xl font-bold">My Calendar</h1>
+          <button onClick={() => setShowLegend(true)} className="p-2 bg-teal-700 rounded-full hover:bg-teal-600">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
+        </header>
+      </div>
 
       {/* LEGEND MODAL */}
       {showLegend && (

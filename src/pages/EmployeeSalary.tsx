@@ -45,10 +45,13 @@ const EmployeeSalary = () => {
 
   return (
     <div className="flex flex-col h-full">
-      {/* HEADER */}
-      <header className="bg-teal-800 text-white p-6 rounded-b-3xl shadow-sm">
-        <h1 className="text-xl font-bold">My Salary</h1>
-      </header>
+      {/* STICKY TOP SECTION */}
+      <div className="sticky top-0 z-30">
+        {/* HEADER */}
+        <header className="bg-teal-800 text-white p-6 rounded-b-3xl shadow-sm relative z-10">
+          <h1 className="text-xl font-bold">My Salary</h1>
+        </header>
+      </div>
 
       {/* CONTENT */}
       <main className="flex-1 px-4 pt-4 pb-6 space-y-4 overflow-y-auto">

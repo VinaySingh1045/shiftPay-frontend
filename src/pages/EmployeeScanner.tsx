@@ -162,16 +162,19 @@ const EmployeeScanner = () => {
 
   return (
     <div className="flex flex-col h-full bg-gray-50 font-sans">
-      {/* HEADER */}
-      <header className="bg-teal-800 text-white p-6 rounded-b-3xl shadow-sm flex justify-between items-center">
-        <h1 className="text-xl font-bold">Employee Scanner</h1>
-        <button
-          onClick={() => setShowLogoutConfirm(true)}
-          className="text-xs font-semibold bg-teal-900 px-3 py-1.5 rounded-full"
-        >
-          Logout
-        </button>
-      </header>
+      {/* STICKY TOP SECTION */}
+      <div className="sticky top-0 z-30">
+        {/* HEADER */}
+        <header className="bg-teal-800 text-white p-6 rounded-b-3xl shadow-sm flex justify-between items-center relative z-10">
+          <h1 className="text-xl font-bold">Employee Scanner</h1>
+          <button
+            onClick={() => setShowLogoutConfirm(true)}
+            className="text-xs font-semibold bg-teal-900 px-3 py-1.5 rounded-full"
+          >
+            Logout
+          </button>
+        </header>
+      </div>
 
       {/* LOGOUT CONFIRM MODAL */}
       {showLogoutConfirm && (

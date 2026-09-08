@@ -121,16 +121,18 @@ const AttendancePage = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 pb-20 font-sans">
-      {/* HEADER */}
-      <header className="bg-teal-800 text-white p-4 rounded-b-2xl shadow-sm">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-xl font-bold">Attendance</h1>
-          <CompanySelector />
-        </div>
-        <div className="flex space-x-4">
-          <div className="flex-1 flex items-center justify-between bg-teal-700/50 border border-teal-600 rounded-xl p-1">
-            <button
-              onClick={() => setDate(moment(date, 'YYYY-MM-DD').subtract(1, 'day').format('YYYY-MM-DD'))}
+      {/* STICKY TOP SECTION */}
+      <div className="sticky top-0 z-30">
+        {/* HEADER */}
+        <header className="bg-teal-800 text-white p-4 rounded-b-2xl shadow-sm relative z-10">
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-xl font-bold">Attendance</h1>
+            <CompanySelector />
+          </div>
+          <div className="flex space-x-4">
+            <div className="flex-1 flex items-center justify-between bg-teal-700/50 border border-teal-600 rounded-xl p-1">
+              <button
+                onClick={() => setDate(moment(date, 'YYYY-MM-DD').subtract(1, 'day').format('YYYY-MM-DD'))}
               className="p-1.5 text-teal-100 hover:text-white hover:bg-teal-600/50 rounded-lg transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
@@ -194,7 +196,8 @@ const AttendancePage = () => {
             </button>
           )}
         </div>
-      </header>
+        </header>
+      </div>
 
       {/* CONTENT */}
       <main className="flex-1 px-4 pt-6 space-y-4">

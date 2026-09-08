@@ -83,22 +83,30 @@ const EmployeeCalendar = () => {
 
     if (dayAttendances.length === 0) return { className: 'bg-gray-100 border-gray-200 text-gray-500' };
 
-    if (dayAttendances.length === 1) {
-      switch (dayAttendances[0].status) {
-        case 'Present': return { className: 'bg-green-500 border-green-600 text-white shadow-sm' };
-        case 'Half Day': return { className: 'bg-yellow-400 border-yellow-500 text-white shadow-sm' };
-        case 'Absent': return { className: 'bg-red-500 border-red-600 text-white shadow-sm' };
-        case 'Full Day Off': return { className: 'bg-blue-500 border-blue-600 text-white shadow-sm' };
-        default: return { className: 'bg-gray-100 border-gray-200 text-gray-500' };
-      }
-    }
+    let topColor = '#f3f4f6'; // default gray
+    let bottomColor = '#f3f4f6'; // default gray
 
-    // Multiple attendances — use split circle (e.g. Day + Night, or 2 companies)
-    const c1 = getColor(dayAttendances[0].status);
-    const c2 = getColor(dayAttendances[1].status);
+    const dayShift = dayAttendances.find(a => a.shift === 'Day');
+    const nightShift = dayAttendances.find(a => a.shift === 'Night');
+
+    if (dayShift) topColor = getColor(dayShift.status);
+    if (nightShift) bottomColor = getColor(nightShift.status);
+
+    // Fallback if records exist without explicit shift info
+    if (!dayShift && !nightShift && dayAttendances.length > 0) {
+      topColor = getColor(dayAttendances[0].status);
+      bottomColor = topColor;
+    }
+    const isGray = topColor === '#f3f4f6' && bottomColor === '#f3f4f6';
+
+    // Use dark text for better visibility on green/yellow backgrounds
+    const textColor = isGray ? 'text-gray-500' : 'text-gray-900 drop-shadow-[0_1px_1px_rgba(255,255,255,0.4)]';
+
+    let backgroundStyle = `linear-gradient(to bottom, ${topColor} 50%, ${bottomColor} 50%)`;
+
     return {
-      className: 'text-white shadow-sm border-white',
-      style: { background: `linear-gradient(135deg, ${c1} 50%, ${c2} 50%)` }
+      className: `shadow-sm border border-gray-200 ${textColor}`,
+      style: { background: backgroundStyle }
     };
   };
 
@@ -130,9 +138,20 @@ const EmployeeCalendar = () => {
               <div className="flex items-center"><div className="w-6 h-6 rounded-full bg-red-500 mr-3"></div><span className="text-gray-700 font-medium">Absent</span></div>
               <div className="flex items-center"><div className="w-6 h-6 rounded-full bg-blue-500 mr-3"></div><span className="text-gray-700 font-medium">Full Day Off</span></div>
               <div className="flex items-center"><div className="w-6 h-6 rounded-full bg-gray-100 border border-gray-200 mr-3"></div><span className="text-gray-700 font-medium">Not Marked</span></div>
-              <div className="flex items-center">
-                <div className="w-6 h-6 rounded-full mr-3 border border-white shadow-sm" style={{ background: 'linear-gradient(135deg, #22c55e 50%, #facc15 50%)' }}></div>
-                <span className="text-gray-700 font-medium">Two shifts / Two companies</span>
+
+              <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
+                <div className="flex items-center">
+                  <div className="w-6 h-6 rounded-full mr-3 border border-gray-200 shadow-sm" style={{ background: 'linear-gradient(to bottom, #22c55e 50%, #f3f4f6 50%)' }}></div>
+                  <span className="text-gray-700 font-medium text-sm">Day Shift Only (Top)</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-6 h-6 rounded-full mr-3 border border-gray-200 shadow-sm" style={{ background: 'linear-gradient(to bottom, #f3f4f6 50%, #22c55e 50%)' }}></div>
+                  <span className="text-gray-700 font-medium text-sm">Night Shift Only (Bottom)</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-6 h-6 rounded-full mr-3 shadow-sm" style={{ background: 'linear-gradient(to bottom, #22c55e 50%, #facc15 50%)' }}></div>
+                  <span className="text-gray-700 font-medium text-sm">Both Shifts</span>
+                </div>
               </div>
             </div>
             <button onClick={() => setShowLegend(false)} className="w-full mt-6 bg-teal-700 text-white font-bold py-3 rounded-xl">Got it</button>
@@ -148,9 +167,8 @@ const EmployeeCalendar = () => {
           <div className="flex space-x-2 overflow-x-auto pb-1">
             <button
               onClick={() => setSelectedCompanyId(null)}
-              className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors ${
-                selectedCompanyId === null ? 'bg-teal-700 text-white border-teal-700' : 'bg-white text-gray-600 border-gray-200'
-              }`}
+              className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors ${selectedCompanyId === null ? 'bg-teal-700 text-white border-teal-700' : 'bg-white text-gray-600 border-gray-200'
+                }`}
             >
               All
             </button>
@@ -158,9 +176,8 @@ const EmployeeCalendar = () => {
               <button
                 key={c._id}
                 onClick={() => setSelectedCompanyId(c._id)}
-                className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors ${
-                  selectedCompanyId === c._id ? 'bg-teal-700 text-white border-teal-700' : 'bg-white text-gray-600 border-gray-200'
-                }`}
+                className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors ${selectedCompanyId === c._id ? 'bg-teal-700 text-white border-teal-700' : 'bg-white text-gray-600 border-gray-200'
+                  }`}
               >
                 {c.name}
               </button>

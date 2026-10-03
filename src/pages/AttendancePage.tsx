@@ -33,7 +33,10 @@ const AttendancePage = () => {
   const dateInputRef = useRef<HTMLInputElement>(null);
 
   const [date, setDate] = useState<string>(new Date().toLocaleDateString('en-CA')); // YYYY-MM-DD local
-  const [shift, setShift] = useState<'Day' | 'Night'>('Day');
+  const [shift, setShift] = useState<'Day' | 'Night'>(() => {
+    const hour = new Date().getHours();
+    return (hour >= 18 || hour < 6) ? 'Night' : 'Day';
+  });
   const [rows, setRows] = useState<EmployeeAttendanceRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);

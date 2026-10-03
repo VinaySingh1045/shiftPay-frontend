@@ -167,19 +167,21 @@ const SalaryPage = () => {
         const title = companyName ? `${companyName} - Salary Report (${formattedMonth})` : `Salary Report - ${formattedMonth}`;
         doc.text(title, 14, 15);
 
-        const tableColumn = ["Employee Name", "Role", "Present", "Half Day", "Absent", "Earned (Rs)", "Paid (Rs)", "Remaining (Rs)"];
+        const tableColumn = ["Employee Name", "Role", "Present", "Half Day", "Absent", "Total Working Days", "Earned (Rs)", "Paid (Rs)", "Remaining (Rs)"];
         const tableRows: any[] = [];
 
-        let totalPresent = 0, totalHalfDay = 0, totalAbsent = 0;
+        let totalPresent = 0, totalHalfDay = 0, totalAbsent = 0, totalWorkingDays = 0;
         let totalEarned = 0, totalPaid = 0, totalRemaining = 0;
 
         rows.forEach(r => {
+          const workingDays = r.stats.present + (r.stats.halfDay * 0.6);
           const rowData = [
             r.employee.name,
             r.role.roleName || r.role.name,
             r.stats.present,
             r.stats.halfDay,
             r.stats.absent,
+            Number(workingDays.toFixed(1)),
             r.stats.totalEarned,
             r.stats.totalPaid,
             r.stats.remaining
@@ -189,6 +191,7 @@ const SalaryPage = () => {
           totalPresent += r.stats.present;
           totalHalfDay += r.stats.halfDay;
           totalAbsent += r.stats.absent;
+          totalWorkingDays += workingDays;
           totalEarned += r.stats.totalEarned;
           totalPaid += r.stats.totalPaid;
           totalRemaining += r.stats.remaining;
@@ -200,6 +203,7 @@ const SalaryPage = () => {
           totalPresent,
           totalHalfDay,
           totalAbsent,
+          Number(totalWorkingDays.toFixed(1)),
           totalEarned,
           totalPaid,
           totalRemaining

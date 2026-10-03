@@ -45,7 +45,7 @@ const SalaryPage = () => {
       api.get('/companies').then(res => {
         const comp = res.data.companies?.find((c: any) => c._id === companyId);
         if (comp) setCompanyName(comp.name);
-      }).catch(() => {});
+      }).catch(() => { });
     }
   }, [companyId]);
 
@@ -185,7 +185,7 @@ const SalaryPage = () => {
             r.stats.remaining
           ];
           tableRows.push(rowData);
-          
+
           totalPresent += r.stats.present;
           totalHalfDay += r.stats.halfDay;
           totalAbsent += r.stats.absent;
@@ -257,88 +257,87 @@ const SalaryPage = () => {
         <header className="bg-teal-800 text-white p-4 rounded-b-2xl shadow-sm relative z-10">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-xl font-bold">Salary Engine</h1>
-          <div className="flex items-center space-x-2">
-            <CompanySelector />
-            {rows.length > 0 && (
+            <div className="flex items-center space-x-2">
+              <CompanySelector />
+              {rows.length > 0 && (
+                <button
+                  onClick={() => isMonthClosed ? setReopenMonthModal(true) : setCloseMonthModal(true)}
+                  className={`text-sm px-3 py-1.5 rounded-full font-bold shadow-sm ${isMonthClosed ? 'bg-white text-teal-800 border border-teal-800 hover:bg-gray-100' : 'bg-orange-500 text-white hover:bg-orange-600'}`}
+                >
+                  {isMonthClosed ? 'Reopen Month' : 'Close Month'}
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="flex space-x-4">
+            <div className="flex-1 flex items-center justify-between bg-teal-700/50 border border-teal-600 rounded-xl p-1">
               <button
-                onClick={() => isMonthClosed ? setReopenMonthModal(true) : setCloseMonthModal(true)}
-                className={`text-sm px-3 py-1.5 rounded-full font-bold shadow-sm ${isMonthClosed ? 'bg-white text-teal-800 border border-teal-800 hover:bg-gray-100' : 'bg-orange-500 text-white hover:bg-orange-600'}`}
+                onClick={() => setMonth(moment(month, 'YYYY-MM').subtract(1, 'month').format('YYYY-MM'))}
+                className="p-2 text-teal-100 hover:text-white hover:bg-teal-600/50 rounded-lg transition-colors"
               >
-                {isMonthClosed ? 'Reopen Month' : 'Close Month'}
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+              </button>
+              <div
+                className="relative flex flex-col items-center cursor-pointer"
+                onClick={() => {
+                  try { monthInputRef.current?.showPicker(); } catch (e) { }
+                }}
+              >
+                <span className="text-white font-bold text-sm tracking-wide px-2 py-1">
+                  {moment(month, 'YYYY-MM').format('MMMM YYYY')}
+                </span>
+                <input
+                  ref={monthInputRef}
+                  type="month"
+                  value={month}
+                  onChange={(e) => setMonth(e.target.value)}
+                  className="absolute inset-0 w-full h-full opacity-0 pointer-events-none"
+                />
+              </div>
+              <button
+                onClick={() => setMonth(moment(month, 'YYYY-MM').add(1, 'month').format('YYYY-MM'))}
+                className="p-2 text-teal-100 hover:text-white hover:bg-teal-600/50 rounded-lg transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+              </button>
+            </div>
+            <button
+              onClick={exportToPDF}
+              disabled={isExporting}
+              className={`flex items-center justify-center border border-teal-600 rounded-xl transition-colors p-2 ${isExporting ? 'bg-teal-800 text-teal-300 opacity-80 cursor-wait' : 'bg-teal-700/50 hover:bg-teal-600 text-white'
+                }`}
+              title="Export to PDF"
+            >
+              {isExporting ? (
+                <svg className="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              ) : (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+              )}
+            </button>
+          </div>
+
+          {/* Search Bar */}
+          <div className="mt-3 relative">
+            <svg className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-teal-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            <input
+              type="text"
+              placeholder="Search employees..."
+              className="w-full bg-teal-700/50 border border-teal-600 text-white text-sm py-2 pl-10 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-400 placeholder-teal-300"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-teal-200 hover:text-white"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             )}
           </div>
-        </div>
-        <div className="flex space-x-4">
-          <div className="flex-1 flex items-center justify-between bg-teal-700/50 border border-teal-600 rounded-xl p-1">
-            <button
-              onClick={() => setMonth(moment(month, 'YYYY-MM').subtract(1, 'month').format('YYYY-MM'))}
-              className="p-2 text-teal-100 hover:text-white hover:bg-teal-600/50 rounded-lg transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-            </button>
-            <div
-              className="relative flex flex-col items-center cursor-pointer"
-              onClick={() => {
-                try { monthInputRef.current?.showPicker(); } catch (e) { }
-              }}
-            >
-              <span className="text-white font-bold text-sm tracking-wide px-2 py-1">
-                {moment(month, 'YYYY-MM').format('MMMM YYYY')}
-              </span>
-              <input
-                ref={monthInputRef}
-                type="month"
-                value={month}
-                onChange={(e) => setMonth(e.target.value)}
-                className="absolute inset-0 w-full h-full opacity-0 pointer-events-none"
-              />
-            </div>
-            <button
-              onClick={() => setMonth(moment(month, 'YYYY-MM').add(1, 'month').format('YYYY-MM'))}
-              className="p-2 text-teal-100 hover:text-white hover:bg-teal-600/50 rounded-lg transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-            </button>
-          </div>
-          <button
-            onClick={exportToPDF}
-            disabled={isExporting}
-            className={`flex items-center justify-center border border-teal-600 rounded-xl transition-colors p-2 ${
-              isExporting ? 'bg-teal-800 text-teal-300 opacity-80 cursor-wait' : 'bg-teal-700/50 hover:bg-teal-600 text-white'
-            }`}
-            title="Export to PDF"
-          >
-            {isExporting ? (
-              <svg className="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-            ) : (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-            )}
-          </button>
-        </div>
-
-        {/* Search Bar */}
-        <div className="mt-3 relative">
-          <svg className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-teal-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-          <input 
-            type="text" 
-            placeholder="Search employees..." 
-            className="w-full bg-teal-700/50 border border-teal-600 text-white text-sm py-2 pl-10 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-400 placeholder-teal-300"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          {searchQuery && (
-            <button 
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-teal-200 hover:text-white"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-            </button>
-          )}
-        </div>
         </header>
       </div>
 
@@ -492,69 +491,69 @@ const SalaryPage = () => {
               <p className="text-xs font-bold text-teal-600 uppercase tracking-wider">Total Earned</p>
             </div>
             {rows
-              .filter(r => r.employee.name.toLowerCase().includes(searchQuery.toLowerCase()))
+              .filter(r => (r.employee?.name || "").toLowerCase().includes(searchQuery.toLowerCase()))
               .map(({ assignmentId, employee, role, isClosed, stats }) => (
-              <div key={assignmentId} className={`bg-white rounded-2xl shadow-sm border p-4 space-y-4 ${isClosed ? 'border-gray-200 opacity-90' : 'border-teal-100'}`}>
-                <div className="flex items-start space-x-4">
-                  <div className={`w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${isClosed ? 'bg-gray-100 text-gray-600' : 'bg-teal-100 text-teal-700'}`}>
-                    {getInitials(employee?.name || '?')}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-800 truncate">{employee?.name || 'Unknown Employee'}</p>
-                    <p className="text-xs text-gray-400 mb-2">{role?.name || 'Unknown Role'}</p>
-                    <div className="flex flex-wrap gap-2">
-                      <div className="bg-green-50 px-2 py-1 rounded-md text-xs font-semibold text-green-700 border border-green-100">
-                        Earned: ₹{stats.totalEarned.toLocaleString()}
-                      </div>
-                      <div className="bg-orange-50 px-2 py-1 rounded-md text-xs font-semibold text-orange-700 border border-orange-100 flex items-center">
-                        Paid: ₹{stats.totalPaid.toLocaleString()}
-                        {!isClosed && stats.payments?.length > 0 && (
-                          <button
-                            onClick={() => setPaymentModal({ isOpen: true, assignmentId, amount: '', date: '', isEdit: true, availablePayments: stats.payments })}
-                            className="ml-1 text-orange-500 hover:text-orange-700"
-                            title="Edit Payments"
-                          >
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                          </button>
-                        )}
-                      </div>
-                      <div className="bg-blue-50 px-2 py-1 rounded-md text-xs font-semibold text-blue-700 border border-blue-100">
-                        Rem: ₹{stats.remaining.toLocaleString()}
+                <div key={assignmentId} className={`bg-white rounded-2xl shadow-sm border p-4 space-y-4 ${isClosed ? 'border-gray-200 opacity-90' : 'border-teal-100'}`}>
+                  <div className="flex items-start space-x-4">
+                    <div className={`w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${isClosed ? 'bg-gray-100 text-gray-600' : 'bg-teal-100 text-teal-700'}`}>
+                      {getInitials(employee?.name || '?')}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-gray-800 truncate">{employee?.name || 'Unknown Employee'}</p>
+                      <p className="text-xs text-gray-400 mb-2">{role?.name || 'Unknown Role'}</p>
+                      <div className="flex flex-wrap gap-2">
+                        <div className="bg-green-50 px-2 py-1 rounded-md text-xs font-semibold text-green-700 border border-green-100">
+                          Earned: ₹{stats.totalEarned.toLocaleString()}
+                        </div>
+                        <div className="bg-orange-50 px-2 py-1 rounded-md text-xs font-semibold text-orange-700 border border-orange-100 flex items-center">
+                          Paid: ₹{stats.totalPaid.toLocaleString()}
+                          {!isClosed && stats.payments?.length > 0 && (
+                            <button
+                              onClick={() => setPaymentModal({ isOpen: true, assignmentId, amount: '', date: '', isEdit: true, availablePayments: stats.payments })}
+                              className="ml-1 text-orange-500 hover:text-orange-700"
+                              title="Edit Payments"
+                            >
+                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                            </button>
+                          )}
+                        </div>
+                        <div className="bg-blue-50 px-2 py-1 rounded-md text-xs font-semibold text-blue-700 border border-blue-100">
+                          Rem: ₹{stats.remaining.toLocaleString()}
+                        </div>
                       </div>
                     </div>
+                    <div className="text-right flex-shrink-0">
+                      <button
+                        onClick={() => setPaymentModal({ isOpen: true, assignmentId, amount: '', date: getDefaultPaymentDate(month), isEdit: false })}
+                        disabled={isClosed}
+                        className="bg-teal-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-teal-800 shadow-sm disabled:opacity-50 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+                      >
+                        {isClosed ? 'Closed' : 'Pay'}
+                      </button>
+                    </div>
                   </div>
-                  <div className="text-right flex-shrink-0">
-                    <button
-                      onClick={() => setPaymentModal({ isOpen: true, assignmentId, amount: '', date: getDefaultPaymentDate(month), isEdit: false })}
-                      disabled={isClosed}
-                      className="bg-teal-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-teal-800 shadow-sm disabled:opacity-50 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
-                    >
-                      {isClosed ? 'Closed' : 'Pay'}
-                    </button>
-                  </div>
-                </div>
 
-                {/* Stats Breakdown */}
-                <div className="grid grid-cols-4 gap-2 bg-gray-50 rounded-xl p-3 border border-gray-100">
-                  <div className="text-center">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Present</p>
-                    <p className="font-semibold text-gray-800">{stats.present}</p>
-                  </div>
-                  <div className="text-center border-l border-gray-200">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Half Day</p>
-                    <p className="font-semibold text-gray-800">{stats.halfDay}</p>
-                  </div>
-                  <div className="text-center border-l border-gray-200">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Absent</p>
-                    <p className="font-semibold text-gray-800">{stats.absent}</p>
-                  </div>
-                  <div className="text-center border-l border-gray-200">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Off</p>
-                    <p className="font-semibold text-gray-800">{stats.off}</p>
+                  {/* Stats Breakdown */}
+                  <div className="grid grid-cols-4 gap-2 bg-gray-50 rounded-xl p-3 border border-gray-100">
+                    <div className="text-center">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Present</p>
+                      <p className="font-semibold text-gray-800">{stats.present}</p>
+                    </div>
+                    <div className="text-center border-l border-gray-200">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Half Day</p>
+                      <p className="font-semibold text-gray-800">{stats.halfDay}</p>
+                    </div>
+                    <div className="text-center border-l border-gray-200">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Absent</p>
+                      <p className="font-semibold text-gray-800">{stats.absent}</p>
+                    </div>
+                    <div className="text-center border-l border-gray-200">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Off</p>
+                      <p className="font-semibold text-gray-800">{stats.off}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         )}
       </main>

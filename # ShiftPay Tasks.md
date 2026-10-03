@@ -1,0 +1,51 @@
+# ShiftPay Tasks
+
+- `[x]` **Phase 1: MERN Project Setup & PWA Foundation**
+  - `[x]` Backend: Initialize Express setup
+  - `[x]` Backend: Configure environment variables, CORS, and basic error handling
+  - `[x]` Frontend: Clean up Vite + React + TypeScript structure
+  - `[x]` Frontend: Setup TailwindCSS (or core styling)
+  - `[x]` Frontend: Configure basic PWA manifest and service worker
+  - `[x]` Frontend: Setup Redux Toolkit and Redux Persist
+- `[x]` **Phase 2: MongoDB Models, Relationships & Indexes**
+  - `[x]` Create User model
+  - `[x]` Create Company & Role models
+  - `[x]` Create Employee & EmployeeCompanyAssignment models
+  - `[x]` Create Attendance & Salary models (SalaryRateHistory, Payment, SalarySettlement)
+  - `[x]` Create Auth/System models (OnboardingInvitation, QRToken)
+- `[x]` **Phase 3: Google Authentication & Role Authorization**
+  - `[x]` Backend: Implement Google OAuth verification and JWT token generation
+  - `[x]` Frontend: Implement Google Login UI and Redux token management
+- `[x]` **Phase 4: Manager First Login & Dynamic Company Creation**
+  - `[x]` Refactor routing to use index.ts
+  - `[x]` Backend API for Company creation & retrieval
+  - `[x]` Frontend Manager Dashboard UI
+- `[x]` **Phase 5: Employee Onboarding, Invitations & Email Auto-link**
+  - `[x]` Backend: Add employee directly (manager creates employee + assignment)
+  - `[x]` Backend: Email auto-link (when employee logs in via Google, link to Employee record)
+  - `[x]` Frontend: People page with employee list and Add Employee form
+- `[x]` **Phase 6: People Management & Bulk Import**
+  - `[x]` Backend: Bulk import endpoint
+  - `[x]` Frontend: Excel/CSV upload UI on People page
+- `[x]` **Phase 7: Manual Attendance & Joining-Date Rules**
+  - `[x]` Backend: Manual attendance marking API (w/ joiningDate check)
+  - `[x]` Frontend: Attendance page with date picker, shift toggle, and marking UI
+- `[x]` **Phase 8: Rotating QR & html5-qrcode Employee Scanner**
+  - `[x]` Backend: Generate QR token API (Manager)
+  - `[x]` Backend: Scan QR token API (Employee) with robust IST Shift Detection
+  - `[x]` Frontend: Manager QR display page (auto-refresh)
+  - `[x]` Frontend: Employee Scanner page (html5-qrcode)
+- `[x]` **Phase 9: IST Shift Detection, Six-Hour Rule & Late Attendance**
+  - `[x]` Backend: Enforce Asia/Kolkata (IST) timezone globally
+  - `[x]` Backend: Shift boundary logic (6 AM - 6 PM Day, 6 PM - 6 AM Night)
+  - `[x]` Backend: 6-hour minimum scan rule
+- `[x]` **Phase 10: Salary Engine & Historical Wage Rates**
+  - `[x]` Backend: Data initialization (baseline SalaryRateHistory for existing employees)
+  - `[x]` Backend: Update `addEmployee` / `bulkImport` to create baseline history
+  - `[x]` Backend: Salary calculation endpoint (`/salary`)
+  - `[x]` Frontend: Salary Manager UI (`SalaryPage.tsx`)
+- `[ ]` **Phase 11: Multiple Payments & Salary Closure**
+- `[ ]` **Phase 12: Employee Calendar & Salary UI**
+- `[ ]` **Phase 13: Mobile/PWA Polish & Accessibility**
+- `[ ]` **Phase 14: Full Business-Rule Testing**
+- `[ ]` **Phase 15: Deployment & Production Hardening**

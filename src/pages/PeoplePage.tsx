@@ -614,7 +614,7 @@ const PeoplePage = () => {
           <div className="space-y-3">
             <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{employees.length} Employee{employees.length !== 1 ? 's' : ''}</p>
             {employees
-              .filter(e => e.employee.name.toLowerCase().includes(searchQuery.toLowerCase()))
+              .filter(e => (e.employee?.name || '').toLowerCase().includes(searchQuery.toLowerCase()))
               .map(({ assignmentId, employee, role, joiningDate }) => (
                 <div key={assignmentId} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center space-x-4">
                   <div className="w-11 h-11 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center text-sm font-bold flex-shrink-0">

@@ -377,7 +377,7 @@ const PeoplePage = () => {
         </div>
 
         {roles.length > 0 && (
-          <div className="flex space-x-2 overflow-x-auto pb-1 mt-2">
+          <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-1 mt-2">
             {roles.map(r => (
               <div key={r._id} className="flex-shrink-0 bg-teal-50 border border-teal-100 px-3 py-1.5 rounded-full text-sm text-teal-800 font-medium flex items-center">
                 {r.name} · ₹{r.wagePerShift}

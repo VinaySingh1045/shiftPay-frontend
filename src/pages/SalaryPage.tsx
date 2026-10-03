@@ -526,7 +526,11 @@ const SalaryPage = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="text-right flex-shrink-0">
+                    <div className="text-right flex-shrink-0 flex items-center space-x-3">
+                      <div className="text-right">
+                        <p className="text-[10px] font-bold text-gray-400 uppercase leading-none mb-1">Total</p>
+                        <p className="text-sm font-bold text-gray-800 leading-none">{Number((stats.present + (stats.halfDay * 0.6)).toFixed(1)) || 0} <span className="text-[10px] font-normal text-gray-500">days</span></p>
+                      </div>
                       <button
                         onClick={() => setPaymentModal({ isOpen: true, assignmentId, amount: '', date: getDefaultPaymentDate(month), isEdit: false })}
                         disabled={isClosed}

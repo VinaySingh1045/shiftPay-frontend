@@ -23,7 +23,7 @@ interface SalaryStats {
 interface SalaryRow {
   assignmentId: string;
   employee: { _id: string; name: string };
-  role: { _id: string; name: string };
+  role: { _id: string; name: string; roleName?: string };
   isClosed: boolean;
   stats: SalaryStats;
 }
@@ -176,7 +176,7 @@ const SalaryPage = () => {
         rows.forEach(r => {
           const rowData = [
             r.employee.name,
-            r.role.name,
+            r.role.roleName || r.role.name,
             r.stats.present,
             r.stats.halfDay,
             r.stats.absent,

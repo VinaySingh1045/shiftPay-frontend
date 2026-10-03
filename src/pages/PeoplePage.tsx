@@ -10,6 +10,7 @@ import * as XLSX from 'xlsx';
 interface Role {
   _id: string;
   name: string;
+  roleName?: string;
   wagePerShift: number;
 }
 
@@ -65,12 +66,13 @@ const PeoplePage = () => {
   const [activeTab, setActiveTab] = useState<'active' | 'inactive' | 'deactivated'>('active');
 
   const [roleName, setRoleName] = useState('');
+  const [displayRoleName, setDisplayRoleName] = useState('');
   const [roleWage, setRoleWage] = useState('');
 
   const [editRoleModal, setEditRoleModal] = useState<{ open: boolean; assignmentId: string; roleId: string }>({ open: false, assignmentId: '', roleId: '' });
   const [roleSheet, setRoleSheet] = useState<{ open: boolean; value: string; onChange: (val: string) => void }>({ open: false, value: '', onChange: () => { } });
 
-  const [editRoleDetailsModal, setEditRoleDetailsModal] = useState<{ open: boolean; roleId: string; name: string; wagePerShift: string }>({ open: false, roleId: '', name: '', wagePerShift: '' });
+  const [editRoleDetailsModal, setEditRoleDetailsModal] = useState<{ open: boolean; roleId: string; name: string; displayRoleName: string; wagePerShift: string }>({ open: false, roleId: '', name: '', displayRoleName: '', wagePerShift: '' });
 
   useEffect(() => {
     if (companyId) fetchData();
@@ -177,10 +179,11 @@ const PeoplePage = () => {
     setSubmitting(true);
     try {
       await api.post(`/companies/${companyId}/roles`, {
-        name: roleName, wagePerShift: Number(roleWage),
+        name: roleName, roleName: displayRoleName, wagePerShift: Number(roleWage),
       });
       setModal('none');
       setRoleName('');
+      setDisplayRoleName('');
       setRoleWage('');
       fetchData();
     } catch (error: any) {
@@ -213,11 +216,12 @@ const PeoplePage = () => {
     setSubmitting(true);
     try {
       await api.patch(`/companies/${companyId}/roles/${editRoleDetailsModal.roleId}`, {
-        name: editRoleDetailsModal.name, 
+        name: editRoleDetailsModal.name,
+        roleName: editRoleDetailsModal.displayRoleName,
         wagePerShift: Number(editRoleDetailsModal.wagePerShift),
       });
       showToast('Role details updated successfully', 'success');
-      setEditRoleDetailsModal({ open: false, roleId: '', name: '', wagePerShift: '' });
+      setEditRoleDetailsModal({ open: false, roleId: '', name: '', displayRoleName: '', wagePerShift: '' });
       fetchData();
     } catch (error: any) {
       showToast(error?.response?.data?.error || 'Failed to update role details', 'error');
@@ -422,7 +426,8 @@ const PeoplePage = () => {
                 <h2 className="text-xl font-bold mb-1 text-gray-800">Add Role</h2>
                 <p className="text-sm text-gray-500 mb-5">Define a job role and its wage per shift.</p>
                 <form onSubmit={handleAddRole} className="space-y-4">
-                  <input className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Role Name (e.g. Worker, Supervisor)" value={roleName} onChange={e => setRoleName(e.target.value)} required />
+                  <input className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Internal Role Name (e.g. CM(800))" value={roleName} onChange={e => setRoleName(e.target.value)} required />
+                  <input className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Display Role Name in PDF (e.g. CM)" value={displayRoleName} onChange={e => setDisplayRoleName(e.target.value)} />
                   <input className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" type="number" placeholder="Wage per Shift (₹)" value={roleWage} onChange={e => setRoleWage(e.target.value)} required min="0" />
                   <div className="flex space-x-3 pt-2">
                     <button type="button" onClick={() => setModal('none')} className="flex-1 py-3 text-gray-600 font-semibold bg-gray-100 rounded-xl">Cancel</button>
@@ -521,10 +526,11 @@ const PeoplePage = () => {
             <h2 className="text-xl font-bold mb-1 text-gray-800">Edit Role Details</h2>
             <p className="text-sm text-gray-500 mb-5">Updates wage for future shifts. Past calculations remain unaffected.</p>
             <form onSubmit={handleEditRoleDetails} className="space-y-4">
-              <input className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Role Name" value={editRoleDetailsModal.name} onChange={e => setEditRoleDetailsModal(m => ({ ...m, name: e.target.value }))} required />
+              <input className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Internal Role Name" value={editRoleDetailsModal.name} onChange={e => setEditRoleDetailsModal(m => ({ ...m, name: e.target.value }))} required />
+              <input className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Display Role Name in PDF (Optional)" value={editRoleDetailsModal.displayRoleName} onChange={e => setEditRoleDetailsModal(m => ({ ...m, displayRoleName: e.target.value }))} />
               <input className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" type="number" placeholder="Wage per Shift (₹)" value={editRoleDetailsModal.wagePerShift} onChange={e => setEditRoleDetailsModal(m => ({ ...m, wagePerShift: e.target.value }))} required min="0" />
               <div className="flex space-x-3 pt-2">
-                <button type="button" onClick={() => setEditRoleDetailsModal({ open: false, roleId: '', name: '', wagePerShift: '' })} className="flex-1 py-3 text-gray-600 font-semibold bg-gray-100 rounded-xl">Cancel</button>
+                <button type="button" onClick={() => setEditRoleDetailsModal({ open: false, roleId: '', name: '', displayRoleName: '', wagePerShift: '' })} className="flex-1 py-3 text-gray-600 font-semibold bg-gray-100 rounded-xl">Cancel</button>
                 <button type="submit" disabled={submitting} className="flex-1 py-3 text-white font-semibold bg-teal-700 rounded-xl disabled:opacity-60">{submitting ? 'Saving...' : 'Save Changes'}</button>
               </div>
             </form>
